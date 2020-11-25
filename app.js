@@ -7,7 +7,7 @@ const conf = pmx.initModule();
 const PM2_MODULE_NAME = 'pm2-gelf-json'
 
 const logger = function (...args) {
-  console.log(`${PM2_MODULE_NAME}: `, ...args)
+  console.log(`${PM2_MODULE_NAME}:`, ...args)
 }
 
 gelf.setConfig({
@@ -87,7 +87,7 @@ function logData(data, explicitLevel) {
 }
 
 pm2.Client.launchBus((err, bus) => {
-  if (err) return;
+  if (err) return logger(`Error: ${err.message}`, err);
 
   logger(`Connected. Sending logs to ${conf.graylogHost}:${conf.graylogPort}.`);
 
