@@ -1,6 +1,6 @@
 {
   "name": "pm2-gelf-json",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "PM2 logging to Graylog using gelf-pro with JSON support",
   "main": "app.js",
   "dependencies": {
@@ -12,13 +12,20 @@
     "type": "git",
     "url": "git+https://github.com/art-ws/pm2-gelf-json.git"
   },
+  "keywords": [
+    "pm2",
+    "gelf",
+    "json",
+    "graylog",
+    "logging"
+  ],
   "config": {
     "graylogPort": 12201,
     "graylogHost": "127.0.0.1",
     "gelfAdapterName": "udp",
     "gelfLogLevelsMapping": "0:7,10:7,20:7,30:6,40:4,50:3,60:0"
   },
-  "author": "Alexander Shagin <art-ws@pm.me>",
+  "author": "art-ws.org <art-ws@pm.me>",
   "license": "MIT",
   "devDependencies": {},
   "bugs": {

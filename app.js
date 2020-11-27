@@ -27,19 +27,17 @@ if (conf.graylogFields) {
   }
 }
 
+const levelMapping = {};
 const gelfLogLevelsMapping = conf.gelfLogLevelsMapping || "0:7,10:7,20:7,30:6,40:4,50:3,60:0";
-const levelMappingSettings = gelfLogLevelsMapping.split(",")
+gelfLogLevelsMapping.split(",")
   .filter(Boolean)
   .map(x => x.split(":"))
   .map(x => [Number(x[0]), Number(x[1])])
+  .forEach(x => {
+    levelMapping[x[0]] = x[1]
+  })
 
-const levelMapping = {};
-levelMappingSettings.forEach(x => {
-  levelMapping[x[0]] = x[1]
-})
-
-const logMethods = {}
-
+// https://github.com/kkamkou/node-gelf-pro/blob/master/README.md  
 const LEVELS = {
   emergency: 0,
   alert: 1,
@@ -51,9 +49,9 @@ const LEVELS = {
   debug: 7
 }
 
-// https://github.com/kkamkou/node-gelf-pro/blob/master/README.md
+const logMethods = {}
 Object.keys(LEVELS).forEach(name => {
-  logMethods[LEVELS[name]] = (gelf[name] || gelf.info).bind(gelf)
+  logMethods[LEVELS[name]] = gelf[name] || gelf.info
 });
 
 function toJSONSafe(data) {
@@ -75,7 +73,7 @@ function logData(data, explicitLevel) {
         level = levelMapping[Number(parsed.level)] || level
         delete parsed.level
       }
-      let msg = 'object'
+      let msg = ''
       if (parsed.msg) {
         msg = parsed.msg
         delete parsed.msg
