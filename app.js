@@ -1,6 +1,7 @@
 const pm2 = require('pm2');
 const pmx = require('pmx');
 const gelf = require('gelf-pro');
+const os = require('os');
 
 const conf = pmx.initModule();
 
@@ -58,11 +59,14 @@ function toJSONSafe(data) {
   try {
     return JSON.parse(data)
   } catch (e) {
+    if (conf.graylogLogParseErrors) {
+      logger('Error (toJSONSafe)', data, e);
+    }
     return null
   }
 }
 
-function logData(data, explicitLevel) {
+function logDataItem(data, explicitLevel) {
   let level = explicitLevel || LEVELS.info
   let logData = [data];
 
@@ -84,6 +88,26 @@ function logData(data, explicitLevel) {
   (logMethods[level] || logMethods[LEVELS.info]).apply(gelf, logData)
 }
 
+function splitLines(data) {
+  if (data && typeof data === 'string') {
+    return data.split(os.EOL).filter(x => x.trim());
+  }
+  return [];
+}
+
+function logData(data, explicitLevel) {
+  try {
+    if (conf.graylogSplitLines) {
+      splitLines(data).forEach(s => logDataItem(s, explicitLevel))
+    } else {
+      logDataItem(data, explicitLevel)
+    }
+  } catch(e) {
+    logger('Error (logData)', data, e);
+  }
+}
+
+
 pm2.Client.launchBus((err, bus) => {
   if (err) return logger(`Error: ${err.message}`, err);
 
@@ -96,7 +120,7 @@ pm2.Client.launchBus((err, bus) => {
 
   bus.on('log:err', (log) => {
     if (log.process.name === PM2_MODULE_NAME) return;
-    logData(log.data, LEVELS.error)
+    logData(log.data, LEVELS.error);    
   });
 
   bus.on('reconnect attempt', () => {

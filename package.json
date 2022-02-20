@@ -1,6 +1,6 @@
 {
   "name": "pm2-gelf-json",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "PM2 logging to Graylog using gelf-pro with JSON support",
   "main": "app.js",
   "dependencies": {
@@ -20,6 +20,8 @@
     "logging"
   ],
   "config": {
+    "graylogLogParseErrors": false,
+    "graylogSplitLines": true,
     "graylogPort": 12201,
     "graylogHost": "127.0.0.1",
     "gelfAdapterName": "udp",

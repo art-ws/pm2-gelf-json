@@ -21,6 +21,8 @@ pm2 install pm2-gelf-json
 ```sh
 $> pm2 set pm2-gelf-json:graylogHost graylog.myserver.org
 $> pm2 set pm2-gelf-json:graylogPort 12201
+$> pm2 set pm2-gelf-json:graylogLogParseErrors true
+$> pm2 set pm2-gelf-json:graylogSplitLines true
 $> pm2 set pm2-gelf-json:graylogFields '{"tag": "pm2"}'
 $> pm2 set pm2-gelf-json:gelfAdapterName 'udp'
 $> pm2 set pm2-gelf-json:gelfLogLevelsMapping '0:7,10:7,20:7,30:6,40:4,50:3,60:0'
